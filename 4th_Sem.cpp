@@ -115,88 +115,91 @@ int main()
   PATTERN pattern ;
   char medium[1000000] ;
   while ( control ) {
-  cout << "----------------- String Searcher ------------------\n" ;
-  cout << " 1. Search within string provided through stdin\n" ;
-  cout << " 2. Search within multiple files through file ptr\n" ;
-  cout << " 3. Exit\n" ;
-  cout << "\n Enter your choice : " ;
-  scanf("%d", &choice ) ;
-  if ( choice == 3 )
-    return 0 ;
+    cout << "----------------- String Searcher ------------------\n" ;
+    cout << " 1. Search within string provided through stdin\n" ;
+    cout << " 2. Search within multiple files through file ptr\n" ;
+    cout << " 3. Exit\n" ;
+    cout << "\n Enter your choice : " ;
+    scanf("%d", &choice ) ;
+    if ( choice == 3 )
+      return 0 ;
   
-  pattern.getstring() ;
+    pattern.getstring() ;
   
-  cout << "Enter the substring ( pattern ) to be searched\n" ;
-  pattern.getstring() ;
+    cout << "Enter the substring ( pattern ) to be searched\n" ;
+    pattern.getstring() ;
   
-  cout << "Pattern entered :  " ;
-  pattern.putstring() ;
+    cout << "Pattern entered :  " ;
+    pattern.putstring() ;
 
-  pattern.longest_proper_comman_prefix_suffix_calculator() ;
+    pattern.longest_proper_comman_prefix_suffix_calculator() ;
   
-  if ( choice == 1 ) {
-    printf("Enter the string within which the pattern is to be searched\n" ) ;
-    biggerstring.getstring() ;
+    if ( choice == 1 ) {
+      printf("Enter the string within which the pattern is to be searched\n" ) ;
+      biggerstring.getstring() ;
   
-    printf("String entered :  ")  ;
-    biggerstring.putstring() ;
+      printf("String entered :  ")  ;
+      biggerstring.putstring() ;
 
-    string_searcher ( biggerstring , pattern , 1 , 0 ) ;
+      string_searcher ( biggerstring , pattern , 1 , 0 ) ;
   
-  }
-  else if ( choice == 2 ) {
-    char filename[30] ;
-    int ans , n ;
-    cout << "Enter the number of files\n" ;
-    cin >> n ;
-    while ( n -- ) {
-      cout << "Enter the name of the file : " ;
-      cin >> filename ;
-      FILE * pfile ;
-      pfile = fopen ( filename , "r" ) ;
-      if ( pfile == NULL ){
-	cout<<"File doesn't exist\n\n\n" ;
-      }
-      else {
-	ans = 0 ;
-	int linesetter = 0 ;
-	while( !feof(pfile)) {
-	  fgets ( medium , 1000000 , pfile ) ;
-	  if ( !feof(pfile)) {
-	    biggerstring.string_copier( medium ) ;
-	    int prev_ans = ans ;
-	    ans += string_searcher ( biggerstring , pattern ,  2 , linesetter) ;
-	    if ( ans > prev_ans ){
-	      biggerstring_printing_iterator = 0 ;
-	      for ( int i = 0 ; i < starting_count ; i ++ ){
-		while ( biggerstring_printing_iterator != starting[i] ){
+    }
+    else if ( choice == 2 ) {
+      char filename[100][100] ;
+      int ans , n ;
+      cout << "Enter the number of files\n" ;
+      cin >> n ;
+      cout << "Enter the path of the files :\n" ;
+      for ( int i = 0 ; i < n ; i ++ )
+	cin >> filename[i] ;
+      for ( int i = 0 ; i < n ; i ++ ){
+	FILE * pfile ;
+	pfile = fopen ( filename[i] , "r" ) ;
+	cout<<"\n\n\n" ;
+	if ( pfile == NULL ){
+	  cout<<"File having path \"" << filename[i] << "\" doesn't exist\n\n\n" ;
+	}
+	else {
+	  cout<<"Searching file with path \"" << filename[i] << "\"\n\n\n" ;
+	  ans = 0 ;
+	  int linesetter = 0 ;
+	  while( !feof(pfile)) {
+	    fgets ( medium , 1000000 , pfile ) ;
+	    if ( !feof(pfile)) {
+	      biggerstring.string_copier( medium ) ;
+	      int prev_ans = ans ;
+	      ans += string_searcher ( biggerstring , pattern ,  2 , linesetter) ;
+	      if ( ans > prev_ans ){
+		biggerstring_printing_iterator = 0 ;
+		for ( int i = 0 ; i < starting_count ; i ++ ){
+		  while ( biggerstring_printing_iterator != starting[i] ){
+		    cout<<biggerstring.strin()[biggerstring_printing_iterator] ;
+		    biggerstring_printing_iterator ++ ;
+		  }
+		  print_in_color ( starting[i] , biggerstring , pattern ) ;
+		}
+		while ( biggerstring_printing_iterator <= biggerstring.len() ){
 		  cout<<biggerstring.strin()[biggerstring_printing_iterator] ;
 		  biggerstring_printing_iterator ++ ;
 		}
-		print_in_color ( starting[i] , biggerstring , pattern ) ;
-	      }
-	      while ( biggerstring_printing_iterator <= biggerstring.len() ){
-		cout<<biggerstring.strin()[biggerstring_printing_iterator] ;
-		biggerstring_printing_iterator ++ ;
-	      }
-	      starting_count = 0 ;
+		starting_count = 0 ;
 
-	      cout<<endl ;
+		cout<<endl ;
+	      }
+	      linesetter ++ ;
 	    }
-	    linesetter ++ ;
 	  }
+	  if ( ans == 1 )
+	    cout << "\n1 match was found.\n" ;
+	  else
+	    cout << "\n" << ans <<" matches were found\n" ;      
+	  fclose(pfile) ;
 	}
-	if ( ans == 1 )
-	  cout << "\n1 match was found.\n" ;
-	else
-	  cout << "\n" << ans <<" matches were found\n" ;      
-	fclose(pfile) ;
       }
     }
-  }
-  else if ( choice == 3 ) control = 0 ;
-  else
-    cout<<"Enter Valid Choice\n" ;
+    else if ( choice == 3 ) control = 0 ;
+    else
+      cout<<"Enter Valid Choice\n" ;
   }
   return 0 ;
 }
